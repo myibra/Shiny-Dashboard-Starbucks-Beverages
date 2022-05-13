@@ -1,0 +1,657 @@
+---
+title: "Starbucks - TidyTuesday"
+author: "Muhammad Yusuf Ibrahim"
+date: '2022-04-29'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Data Tranformation
+
+Data yang digunakan pada projek ini merupakan data *Starbucks Coffee Company Beverage Nutrition Information* yang bersumber dari TidyTuesday (https://github.com/rfordatascience/tidytuesday/blob/master/data/2021/2021-12-21/readme.md).
+
+## Importing Data
+
+Pada kesempatan kali ini untuk *importing* data menggunakan *library* `readr`.
+```{r}
+library(readr)
+```
+
+Fungsi yang digunakan dari *library* `readr` adalah `read_csv` untuk mengimpor data dengan ekstensi CSV dari halaman github tidytuesday.
+```{r}
+sbux <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-12-21/starbucks.csv')
+```
+## Data Preparation
+
+```{r}
+library(dplyr)
+```
+
+```{r}
+glimpse(sbux)
+```
+Deskripsi Kolom:
+- **product_name**    : Nama Produk
+- **size**            : Ukuran Minuman (*short*, *tall*, *grande*, *venti*, *dll*)           
+- **milk**            : Tipe susu yang digunakan
+- **whip**            : Menggunakan *whip cream* atau tidak (biner 0/1)
+- **serv_size_m_l**   : Ukuran minuman (ml)
+- **calories**        : Total kalori (Kcal)
+- **total_fat_g**     : Total fat (gr)  
+- **saturated_fat_g** : Total Saturated fat (gr)
+- **trans_fat_g**     : Trans fat (gr)
+- **cholesterol_mg**  : Cholesterol (mg)
+- **sodium_mg**       : Sodium (gr)
+- **total_carbs_g**   : Total karbohidrat (gr)
+- **fiber_g**         : Fiber (gr)
+- **sugar_g**         : Gula (gr)
+- **caffeine_mg**     : Kafein (mg)
+
+Dari deskripsi kolom dan hasil menggunakan fungsi `glimpse` kita dapat menentukan kolom mana perlu di rubah tipe data nya. Kolom yang perlu dilakukan perubahan tipe data sebagai berikut:
+- **product_name** dari `character` -> `factor` dikarenakan berisi data kategori
+- **size** dari `character` -> `factor` dikarenakan berisi data ketegori 
+- **milk** dari `double` -> `factor` pada kolom ini berisi informasi menggunakan tipe susu yang digunakan dalam bentuk angka
+- **whip** dari `double` -> `factor`hanya berisi informasi 0 jika **tidak menggunakan** whip cream dan 1 jika **menggunakan** whip cream
+- **trans_fat_g** dari `character` -> `numeric` karena berisi informasi jumlah dari trans fat
+- **fiber_g** ari `character` -> `numeric` karena berisi informasi jumlah dari fiber
+
+```{r}
+unique(sbux$milk)
+unique(sbux$whip)
+```
+Nilai pada kolom *milk* ini memiliki arti sebagai berikut:
+- `0` adalah `none` 
+- `1` adalah `nonfat`
+- `2` adalah `2%`
+- `3` adalah `soy`
+- `4` adalah `coconut`
+- `5` adalah `whole`
+
+sedangkan pada kolom *whip* memiliki arti:
+- `0` adalah `without whip cream` 
+- `1` adalah `with whip cream`
+
+Maka dari itu kita akan mengganti dari data berupa angka menjadi tipe susu yang digunakan menggunakan fungsi `replace``
+```{r}
+sbux$milk <- sbux$milk %>% 
+              replace(sbux$milk == 0, 'none') %>% 
+              replace(sbux$milk == 1, 'nonfat') %>%
+              replace(sbux$milk == 2, '2%') %>%
+              replace(sbux$milk == 3, 'soy') %>%
+              replace(sbux$milk == 4, 'coconut') %>%
+              replace(sbux$milk == 5, 'whole') 
+
+sbux$whip <- sbux$whip %>% 
+              replace(sbux$whip == 0, 'without whip cream') %>% 
+              replace(sbux$whip == 1, 'with whip cream')
+
+unique(sbux$milk)
+unique(sbux$whip)
+```
+
+```{r}
+sbux_clean <- sbux %>% 
+                mutate(
+                  product_name = as.factor(product_name),
+                  size = as.factor(size),
+                  milk = as.factor(milk),
+                  whip = as.factor(whip),
+                  trans_fat_g = as.numeric(trans_fat_g),
+                  fiber_g = as.numeric(fiber_g)
+                      )
+head(sbux_clean)
+```
+```{r}
+head(sbux_clean, 20)
+```
+#membuat seragam format penulisan menjadi proper case menggunakan fungsi `str_to_title()`
+```{r}
+library(stringr)
+```
+
+```{r}
+sbux_clean$product_name <- str_to_title(sbux_clean$product_name)
+```
+
+```{r}
+cat_coffee <- c('Brewed Coffee - Dark Roast', 
+                        'Brewed Coffee Traveler - Dark Roast',
+                        'Brewed Coffee - Decaf Pike Place Roast',
+                        'Brewed Coffee - Medium Roast',
+                        'Brewed Coffee Traveler - Decaf Pike Place Roast',
+                        'Brewed Coffee Traveler - Medium Roast',
+                        'Brewed Coffee - True North Blend Blonde Roast',
+                        'Brewed Coffee Traveler - True North Blend Blonde Roast',
+                        'Caffè Misto',
+                        'Clover Brewed Coffee - Dark Roast',
+                        'Clover Brewed Coffee - Light Roast',
+                        "Clover Brewed Coffee - Light Roast",
+                        'Clover Brewed Coffee - Medium Roast',
+                        'Iced Coffee',
+                        'Iced Coffee With Milk',
+                        'Cold Brewed Coffee',
+                        'Vanilla Sweet Cream Cold Brew')
+```
+
+```{r}
+cat_espresso <- c('Caffè Americano',
+                  'Iced Caffè Americano',
+                  'Caffè Latte',
+                  'Iced Caffè Latte',
+                  'Caffè Mocha',
+                  'Iced Caffè Mocha',
+                  'Cappuccino',
+                  'Caramel Macchiato',
+                  'Iced Caramel Macchiato',
+                  'Cinnamon Dolce Latte',
+                  'Espresso',
+                  'Iced Espresso',
+                  'Espresso Con Panna',
+                  'Espresso Macchiato',
+                  'Flat White',
+                  'Latte Macchiato',
+                  'Skinny Cinnamon Dolce Latte',
+                  'Iced Skinny Cinnamon Dolce Latte',
+                  'Skinny Mocha',
+                  'Iced Skinny Mocha',
+                  'Starbucks Doubleshot On Ice',
+                  'White Chocolate Mocha',
+                  'Iced White Chocolate Mocha',
+                  'Espresso - Caffè Americano',
+                  'Espresso - Iced Caffè Americano')
+```
+
+```{r}
+cat_tea <- c('Iced Black Tea',
+             'Iced Black Tea Lemonade',
+             'Chai Tea Latte',
+             'Iced Chai Tea Latte',
+             'Earl Grey Brewed Tea',
+             "Emperor's Clouds And Mist Brewed Tea",
+             'English Breakfast Black Brewed Tea',
+             'English Breakfast Black Tea Latte',
+             'Green Tea Latte',
+             'Iced Green Tea Latte',
+             'Iced Green Tea',
+             'Iced Green Tea Lemonade',
+             'Jade Citrus Mint Brewed Tea',
+             'London Fog Tea Latte',
+             'Iced Mango Black Tea',
+             'Iced Mango Black Tea Lemonade',
+             'Mint Majesty Brewed Tea',
+             'Oprah Chai Herbal Brewed Tea',
+             'Oprah Cinnamon Chai Brewed Tea',
+             'Oprah Cinnamon Chai Latte',
+             'Iced Oprah Cinnamon Chai Latte',
+             'Passion Tango Brewed Tea',
+             'Iced Passion Tango tea',
+             'Iced Passion Tango Tea Lemonade',
+             'Peach Iced Green Tea',
+             'Peach Iced Green Tea Lemonade',
+             'Peach Tranquility Brewed Tea',
+             'Youthberry Brewed Tea',
+             "Iced Passion Tango Tea")
+```
+
+```{r}
+cat_refresher <- c('Cool Lime Starbucks Refreshers',
+                   'Very Berry Hibiscus Starbucks Refreshers')
+```
+
+```{r}
+cat_smoothies <- c('Chocolate Smoothie',
+                   'Orange Mango Smoothie',
+                   'Strawberry Smoothie')
+```
+
+```{r}
+cat_frappuccino_blended_coffee <- c('Caffè Vanilla Frappuccino Blended',
+                     'Caramel Frappuccino Blended',
+                     'Coffee Frappuccino Blended',
+                     'Espresso Frappuccino Blended',
+                     'Java Chip Frappuccino Blended',
+                     'Mocha Frappuccino Blended')
+```
+
+```{r}
+cat_frappuccino_light_blended_coffee <-  c('Caffè Vanilla Frappuccino Light',
+                                           'Caramel Frappuccino Light',
+                                           'Coffee Frappuccino Light',
+                                           'Espresso Frappuccino Light',
+                                           'Java Chip Light Frappuccino',
+                                           'Mocha Light Frappuccino')
+```
+
+```{r}
+cat_frappucino_blended_crème <- c('Blended Strawberry Lemonade',
+                                  'Chai Crème Frappuccino Blended',
+                                  'Double Chocolaty Chip Crème Frappuccino Blended',
+                                  'Green Tea Crème Frappuccino Blended',
+                                  'Oprah Cinnamon Chai Crème Frappuccino Blended',
+                                  'Strawberries & Crème Frappuccino Blended',
+                                  'Vanilla Bean Crème Frappuccino Blended')
+```
+
+
+```{r}
+cat_hot_chocolate_other <- c('Caramel Apple Spice',
+                             'Hot Chocolate',
+                             'Lemonade',
+                             'Milk',
+                             'Skinny Hot Chocolate',
+                             'White Hot Chocolate')
+```
+
+```{r}
+cat_add_ons <- c('Protein & Fibre Powder',
+                 'Matcha Green Tea Powder',
+                 'Espresso Shot')
+```
+
+```{r}
+sbux_new <- sbux_clean %>%
+  dplyr::mutate(category = case_when(
+    product_name %in% cat_coffee ~ 'Coffee',
+    product_name %in% cat_espresso ~ 'Espresso',
+    product_name %in% cat_tea ~ 'Tea',
+    product_name %in% cat_refresher ~ 'Refersher',
+    product_name %in% cat_smoothies ~ 'Smoothies',
+    product_name %in% cat_frappuccino_blended_coffee ~ 'Frappuccino Blended Coffee',
+    product_name %in% cat_frappuccino_light_blended_coffee ~ 'Frappuccino Light Blended Coffee',
+    product_name %in% cat_frappucino_blended_crème ~ 'Frappucino Blended Crème',
+    product_name %in% cat_hot_chocolate_other ~ 'Hot Chocolate & Other',
+    product_name %in% cat_add_ons ~ 'Add-Ons'))
+
+
+  # dplyr::filter(product_name %in% c('Brewed Coffee - Dark Roast', 
+  #                                   'Brewed Coffee Traveler - Dark Roast', 
+  #                                   'Brewed Coffee - Decaf Pike Place Roast', 
+  #                                   'Brewed Coffee - Medium Roast', 
+  #                                   'Brewed Coffee Traveler - Decaf Pike Place Roast',
+  #                                   'Brewed Coffee Traveler - Medium Roast',
+  #                                   'Brewed Coffee - True North Blend Blonde Roast',
+  #                                   'Brewed Coffee Traveler - True North Blend Blonde Roast',
+  #                                   'Caffè Misto',
+  #                                   'Clover Brewed Coffee - Dark Roast',
+  #                                   'Clover Brewed Coffee - Light Roast',
+  #                                   'Clover Brewed Coffee - Medium Roast',
+  #                                   'Iced Coffee',
+  #                                   'Iced Coffee With Milk',
+  #                                   'Cold Brewed Coffee',
+  #                                   'Vanilla Sweet Cream Cold Brew')) %>% 
+  # dplyr::mutate(category = 'Coffee')
+  
+```
+
+```{r}
+sum(is.null(sbux_clean))
+```
+
+```{r}
+sum(is.na(sbux_new))
+```
+```{r}
+sbux_new %>% 
+  select(c(product_name,category))
+```
+
+```{r}
+sbux_new$category[is.na(sbux_new$category)] = 'Coffee'
+```
+
+```{r}
+sum(is.na(sbux_new))
+```
+```{r}
+glimpse(sbux_new)
+```
+
+# Data Visualization
+
+```{r}
+library(ggplot2)
+library(tidyr)
+library(plotly)
+library(glue)
+```
+
+```{r}
+top_10_sbux <- sbux_new %>% 
+              filter(category == 'Espresso') %>%
+              dplyr::group_by(product_name) %>% 
+              dplyr::summarise(avg_cal = mean(calories)) %>% 
+              ungroup() %>% 
+              arrange(desc(avg_cal)) %>% 
+              head(10) %>% 
+              mutate(label = glue('Product Name: {product_name}
+                                   Average Calories : {scales::comma(avg_cal)}'))
+top_10_sbux
+```
+```{r}
+var <- 'calories'
+sbux_new %>% 
+              filter(category == 'Espresso') %>%
+              dplyr::group_by(product_name) %>% 
+              dplyr::summarise(avg_cal = mean((!!as.symbol(var)))) %>% 
+              ungroup() %>% 
+              arrange(desc(avg_cal)) %>% 
+              head(10) %>% 
+              mutate(label = glue('Product Name: {product_name}
+                                   Average Calories : {scales::comma(avg_cal)}'))
+
+```
+
+
+```{r}
+plot1 <-  ggplot(top_10_sbux, aes(x = avg_cal, y = reorder(product_name, avg_cal), text = label)) +
+          geom_point(size = 3, color="#69b3a2") +
+          geom_segment(aes(x = 0, xend = avg_cal, yend = product_name), size = 1, color = "#69b3a2") +
+          scale_fill_gradient(low = "green", high = "black") +
+          theme_minimal()
+
+ggplotly(plot1, tooltip = 'text')
+
+```
+
+## Plot histogram kandungan gula pada kategori espresso
+```{r}
+plot_hist <- sbux_new %>% 
+                filter(category == 'Espresso') %>% 
+                #mutate(label = glue("Sugar : {sugar_g} g
+                #                   Freq : {n(sugar_g)}")) %>% 
+                ggplot(aes(x = sugar_g)) + 
+                geom_histogram(fill="#69b3a2", color="#e9ecef", binwidth = 3) +
+                theme_minimal() +
+                ggtitle('Sugar Content in Espresso Beverages') +
+                theme(plot.title = element_text(hjust = 0.5)) +
+                labs(x= 'Sugar (g)', y = 'Freq')
+```
+
+
+
+```{r}
+gg <- ggplotly(plot_hist)
+gg
+```
+
+```{r}
+text_x <- number(
+  gg$x$data[[1]]$x,
+  prefix = "Freq: "
+)
+
+text_y <- number(
+  gg$x$data[[1]]$y,
+  prefix = "Sugar: ",
+  suffix = " g"
+)
+
+gg %>%
+  style(text = paste0(text_x, "</br></br>", text_y), traces = 1) 
+```
+
+
+```{r}
+ sbux_new %>% 
+                filter(category == 'Espresso') %>% 
+                count(sugar_g) %>% 
+                ggplot(aes(x = sugar_g, y = n)) + 
+                geom_col(fill="#69b3a2", color="#e9ecef") +
+                theme_minimal() +
+                ggtitle('Sugar Content in Espresso Beverages') +
+                theme(plot.title = element_text(hjust = 0.5)) +
+                labs(x= 'Sugar (g)', y = 'Freq')
+```
+
+## Scatter kafein vs calori
+
+```{r}
+sbux_new %>% 
+                #filter(category == 'Espresso') %>% 
+                ggplot(aes(y = caffeine_mg, x = sugar_g, label = product_name)) +
+                geom_point() +
+                geom_hline(yintercept = 400, color = 'brown', linetype = 2) +
+                geom_vline(xintercept = 36, color = 'blue', linetype = 2) + #for men
+                geom_vline(xintercept = 24, color = 'pink', linetype = 2) +
+                geom_text(aes(0, 400, label = 'caffein max. daily intake (400 mg)', vjust = -0.5, hjust =-0.05)) +
+                geom_text(aes(36, 0, label = 'sugar max. daily intake (36 g)', angle = 90, vjust = -0.5, hjust =-0.05)) +
+                theme_minimal()
+```
+
+
+```{r}
+sbux_clean %>% 
+  group_by(product_name, size) %>% 
+  summarise(n_calories = sum(calories)) %>% 
+  ungroup() %>%
+  top_n(10) %>% 
+  ggplot(aes(x = n_calories,
+             y = reorder(product_name, n_calories))) +
+  geom_col()
+```
+```{r}
+library(glue)
+library(plotly)
+```
+
+
+```{r}
+test <- sbux_clean %>% 
+  mutate(label = glue('Product Name : {product_name}
+                      Size : {size}
+                      Calories : {calories} gr
+                      Sugar : {sugar_g} gr
+                      Caffeine : {caffeine_mg} mg ')) %>% 
+  ggplot(aes(x = calories, y = product_name, text = label)) +
+  geom_jitter(aes(color = size))
+```
+
+```{r}
+ggplotly(test, tooltip = 'text')
+```
+
+```{r}
+test1 <- sbux_clean %>% 
+  mutate(label = glue('Product Name : {product_name}
+                      Size : {size}')) %>% 
+  ggplot(aes(x = calories, y = sugar_g, text = label)) +
+  geom_point(aes(color = product_name), position = 'jitter') +
+  theme_minimal() +
+  theme(legend.position = 'none') +
+  labs(x = 'Calories (kcal)', y = 'Sugar (g)') +
+  facet_wrap(facets = ~ size)
+test1
+```
+
+```{r}
+ggplotly(test1, tooltip = 'text')
+
+```
+
+```{r}
+dat <- data.frame(
+    group = rep(c("Above", "Below"), each=10),
+    x = rep(1:10, 2),
+    y = c(runif(10, 0, 1), runif(10, -1, 0))
+)
+
+dat
+```
+
+## Test Comparison
+```{r}
+library(ggplot2)
+ggplot(dat, aes(x=x, y=y, fill=group)) + 
+  geom_bar(stat="identity", position="identity")
+```
+https://stackoverflow.com/questions/48529622/having-two-symmetric-bar-charts-plotly
+```{r}
+library(plotly)
+library(dplyr)
+
+age <- rep(1:5, 2)
+
+sex <- rep(c('Male', 'Female'), each = 5)
+
+pop <- c(-1000, -944, -888, -762, -667, 1100, 999, 844, 789, 655)
+
+df <- data.frame(age, sex, pop) %>%
+  mutate(abs_pop = abs(pop))
+df
+```
+```{r}
+male <- df %>% 
+  filter(sex == 'Male')
+
+Female <- df %>% 
+  filter(sex == 'Female')
+```
+
+
+```{r}
+df %>% 
+  plot_ly(x= ~pop, y=~age, showlegend = FALSE) %>% 
+  add_trace(x = ~pop, y = ~age, type = "bar", marker = list(color = "white")) %>%  #white marker
+  add_trace(x = ~sex,  y = ~age, type = "bar", marker = list(color = "#436983")) %>% 
+  add_text(x = 0, y = ~age, text = ~df$age, type = "scatter", 
+          hoverinfo = "text", mode = "text",
+          textfont = list(family = "'Raleway', sans-serif", 
+          size = 14, color = "black")) %>% 
+  add_bars(orientation = 'h', hoverinfo = 'text', text = ~abs_pop) %>%
+  layout(bargap = 0.3, barmode = 'overlay', 
+         xaxis = list(tickmode = 'array',tickvals = c(-1000, -500, 0, 500, 1000),
+                      ticktext = c('1000', '500', '0', '500', '1000'),
+                      fixedrange = TRUE, 
+                      zeroline = TRUE, zerolinecolor = "#f2fcff",
+                      title = "", ticks = ""),
+         yaxis = list(title = "", 
+                      fixedrange = TRUE,
+                      showticklabels = FALSE),
+         shapes = list(list(x0 = -100, x1 = -0, y0 = -1, y1 = nrow(df),
+                            line = list(color = "white"),
+                            fillcolor = 'white'),
+                        list(x0 =  100, x1 =  0, y0 = -1, y1 = nrow(df),
+                            line = list(color = "white"),
+                            fillcolor = 'white')),
+         annotations = list(
+                       list(text = paste("Higher value in female",df$sex), 
+                            font = list(size = 16),
+                            align = "center", xref = "paper",
+                            yref = "paper", xanchor = "center",
+                            x = .25, y = 1.1, showarrow = FALSE),
+                       list(text = paste("Higher value in male",df$sex), 
+                            font = list(size = 16),
+                            align = "center", xref = "paper",
+                            yref = "paper", xanchor = "center",
+                            x = .75, y = 1.1, showarrow = FALSE)),
+                      margin = list(l = 10, r = 10, t = 80, b = 80, pad = 5),
+                      font = list(family = "'Raleway', sans-serif") %>% 
+            config(displayModeBar = FALSE)
+        )
+```
+
+```{r}
+df %>% 
+  ggplot(aes(x = age, y = pop, fill = sex)) +
+  geom_bar(stat="identity", position="identity") +
+  coord_flip() +
+  geom_rect(aes(ymin = -100, ymax = 100, xmin = 0.5, xmax = 5.5), fill = 'white') +
+  theme_void() + 
+  theme(legend.position = 'none')
+```
+https://stackoverflow.com/questions/43918698/ggplot-centre-and-move-the-vertical-axis-labels
+```{r}
+plot1 <- ggplot(df) +
+  geom_bar(data = df, aes(x = age, y = pop), stat = "identity",
+    fill = "blue", width = 0.8) +
+  scale_y_continuous(trans = "reverse", expand = c(0, 0)) +
+  scale_x_discrete(position = "top") +
+  theme(
+    axis.text.y = element_blank()
+  ) +
+  labs(x = NULL) +
+  coord_flip()
+
+plot2 <- ggplot(df) +
+  geom_bar(data = df, aes(x = age, y = pop), stat = "identity",
+    fill = "red", width = 0.8) +
+  scale_y_continuous(expand = c(0, 0)) +
+  theme(
+    axis.text.y = element_text(size = 20, hjust = 0.5)
+  ) +
+  labs(x = "") +
+  coord_flip()
+```
+
+## Comparison
+
+```{r}
+head(sbux_new)
+```
+```{r}
+unique(sbux_new$category)
+```
+
+### aggregate tabel
+```{r}
+agg_test <- sbux_new %>% 
+  filter(category == 'Frappuccino Blended Coffee') %>% 
+  filter(product_name == 'Caffè Vanilla Frappuccino Blended') %>% 
+  filter(milk == '2%') %>%
+  filter(whip == 'with whip cream') %>% 
+  filter(size == 'venti') %>% 
+  select(-c(size,milk,whip,serv_size_m_l,category)) %>% 
+  pivot_longer(cols = c(calories,total_fat_g,saturated_fat_g, trans_fat_g, cholesterol_mg, sodium_mg, total_carbs_g, fiber_g, sugar_g, caffeine_mg), names_to = 'nutrition')
+
+agg_test
+
+agg_test2 <- sbux_new %>% 
+  filter(category == 'Frappuccino Blended Coffee') %>% 
+  filter(product_name == 'Caffè Vanilla Frappuccino Blended') %>% 
+  filter(milk == 'whole') %>%
+  filter(whip == 'with whip cream') %>% 
+  filter(size == 'tall') %>% 
+  select(-c(size,milk,whip,serv_size_m_l,category)) %>% 
+  pivot_longer(cols = c(calories,total_fat_g,saturated_fat_g, trans_fat_g, cholesterol_mg, sodium_mg, total_carbs_g, fiber_g, sugar_g, caffeine_mg), names_to = 'nutrition')
+
+agg_test2
+```
+
+```{r}
+plot1_test <- ggplot(agg_test) +
+   geom_bar(data = agg_test, aes(x = nutrition, y = value), stat = "identity", fill = "blue", width = 0.8) +
+  scale_y_continuous(trans = "reverse", breaks = seq(0, 600, by = 100)) +
+  scale_x_discrete(position = "top") +
+  theme(
+    axis.text.y = element_blank()
+  ) +
+  labs(x = NULL) +
+  coord_flip()
+
+  plot1_test
+```
+
+
+```{r}
+plot1_test2 <- ggplot(agg_test2) +
+  geom_bar(data = agg_test2, aes(x = nutrition, y = value), stat = "identity",
+    fill = "red", width = 0.8) +
+  scale_y_continuous(limits = c(0,600), breaks = seq(0, 600, by = 100)) +
+  theme(
+    axis.text.y = element_text(size = 12, hjust = 0.5, margin=margin(r=30))
+  ) +
+  labs(x = "") +
+  coord_flip()
+
+plot1_test2
+```
+
+```{r}
+require("gridExtra")
+
+gridExtra::grid.arrange(plot1_test, plot1_test2, ncol = 2, widths = c(1, 1.2))
+```
+
