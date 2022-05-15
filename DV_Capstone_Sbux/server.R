@@ -147,8 +147,7 @@ function(input, output, session) {
     selectInput(
       inputId = 'milk1',
       label = 'Select Milk',
-      choices = unique(agg_sbux_pro1$milk)
-    )
+      choices = unique(agg_sbux_pro1$milk))
   
   })
   
@@ -158,8 +157,7 @@ function(input, output, session) {
     selectInput(
       inputId = 'whip1',
       label = 'Select Whip',
-      choices = unique(agg_sbux_milk1$whip)
-    )
+      choices = unique(agg_sbux_milk1$whip))
   })
   #Halaman Ketiga
   output$table <- DT::renderDataTable({
