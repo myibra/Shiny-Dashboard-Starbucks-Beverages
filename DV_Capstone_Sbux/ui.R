@@ -47,7 +47,7 @@ navbarPage(
              ))),
   tabPanel("Beverage Comparison",
            #filter
-           fluidRow(
+           fluidRow( align="center",
              'buat membandingkan 2 minuman'
            ),
            fluidRow(
@@ -100,6 +100,9 @@ navbarPage(
                       label = 'Select Size',
                       choices = NULL)
                     )
+           ),
+           fluidRow(
+             plotlyOutput('comparison')
            )),
   tabPanel("Data", DT::dataTableOutput("table")),
   
