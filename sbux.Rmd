@@ -597,7 +597,7 @@ unique(sbux_new$category)
 
 ### aggregate tabel
 ```{r}
-agg_test <- sbux_new %>% 
+beverage1 <- sbux_new %>% 
   filter(category == 'Frappuccino Blended Coffee') %>% 
   filter(product_name == 'Caffè Vanilla Frappuccino Blended') %>% 
   filter(milk == '2%') %>%
@@ -606,9 +606,8 @@ agg_test <- sbux_new %>%
   select(-c(size,milk,whip,serv_size_m_l,category)) %>% 
   pivot_longer(cols = c(calories,total_fat_g,saturated_fat_g, trans_fat_g, cholesterol_mg, sodium_mg, total_carbs_g, fiber_g, sugar_g, caffeine_mg), names_to = 'nutrition')
 
-agg_test
 
-agg_test2 <- sbux_new %>% 
+beverage2<- sbux_new %>% 
   filter(category == 'Frappuccino Blended Coffee') %>% 
   filter(product_name == 'Caramel Frappuccino Blended') %>% 
   filter(milk == '2%') %>%
@@ -616,12 +615,14 @@ agg_test2 <- sbux_new %>%
   filter(size == 'venti') %>% 
   select(-c(size,milk,whip,serv_size_m_l,category)) %>% 
   pivot_longer(cols = c(calories,total_fat_g,saturated_fat_g, trans_fat_g, cholesterol_mg, sodium_mg, total_carbs_g, fiber_g, sugar_g, caffeine_mg), names_to = 'nutrition') 
-agg_test2
+
+comp_beverage <- bind_rows(beverage1, beverage2)
+
 ```
 #### fix agg tabel
 
 ```{r}
-sbux_new$whip[sbux_new$category == 'Frappuccino Blended Coffee' & sbux_new$product_name == 'Caramel Frappuccino Blended' & sbux_new$milk == '2%']
+unique(sbux_new$whip[sbux_new$category == 'Frappuccino Blended Coffee' & sbux_new$product_name == 'Caramel Frappuccino Blended' & sbux_new$milk == '2%'])
 ```
 
 agg 1
