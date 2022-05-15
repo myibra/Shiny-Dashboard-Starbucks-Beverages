@@ -622,6 +622,22 @@ comp_beverage
 ```
 
 ```{r}
+comp_beverage$nutrition <- comp_beverage$nutrition %>% 
+  replace(comp_beverage$nutrition == 'calories', 'Calories (kcal)') %>% 
+  replace(comp_beverage$nutrition == 'total_fat_g', 'Total Fat (g)') %>% 
+  replace(comp_beverage$nutrition == 'saturated_fat_g','Saturated Fat (g)') %>% 
+  replace(comp_beverage$nutrition == 'trans_fat_g','Trans Fat (g)') %>% 
+  replace(comp_beverage$nutrition == 'cholesterol_mg','Cholesterol (g)') %>% 
+  replace(comp_beverage$nutrition == 'sodium_mg','Sodium (mg)') %>% 
+  replace(comp_beverage$nutrition == 'total_carbs_g','Total Carbs (g)') %>% 
+  replace(comp_beverage$nutrition == 'fiber_g','Fiber (g)') %>% 
+  replace(comp_beverage$nutrition == 'sugar_g','Sugar (g)') %>% 
+  replace(comp_beverage$nutrition == 'caffeine_mg','Caffeine (mg)') 
+
+comp_beverage
+```
+
+```{r}
 comp <- ggplot(comp_beverage, aes(x = nutrition, y = value, fill = product_name)) +
   geom_bar(stat="identity", position="dodge", width=0.8) +
   theme_minimal() +
@@ -656,7 +672,9 @@ comp <- ggplot(comp_beverage, aes(x = nutrition, y = value, fill = product_name)
 ```
 
 ```{r}
-ggplotly(comp)
+gg_comp <- ggplotly(comp)
+
+
 ```
 
 #### fix agg tabel
