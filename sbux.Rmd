@@ -724,7 +724,9 @@ ggplot(agg, aes(x = nutrition, y = value, fill = product_name)) +
                               "Sugar",
                               "Total Carbs",
                               "Total Fat",
-                              "Trans Fat")) 
+                              "Trans Fat")) +
+  labs(title = 'Caffè Vanilla Frappuccino Blended vs Caramel Frappuccino Blended') +
+  theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank())
 ```
 
 
