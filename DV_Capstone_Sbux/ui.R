@@ -57,15 +57,15 @@ navbarPage(
                     selectInput(
                       inputId = "pro1", 
                       label = "Select Product",
-                      choices = unique(agg_sbux_cat1$product_name)),
+                      choices = NULL), #unique(agg_sbux_cat1$product_name)
                     selectInput(
                       inputId = 'milk1',
                       label = 'Select Milk',
-                      choices = unique(agg_sbux_pro1$milk)),
+                      choices = NULL), #unique(agg_sbux_pro1$milk)
                     selectInput(
                       inputId = 'whip1',
                       label = 'Select Whip',
-                      choices = unique(agg_sbux_milk1$whip))
+                      choices = NULL) #unique(agg_sbux_milk1$whip)
 
                     ),
              column(width = 6,
