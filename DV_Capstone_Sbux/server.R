@@ -218,7 +218,7 @@ function(input, output, session) {
       theme(axis.text.y = element_blank()) +
       scale_fill_manual(values=c("#00704A", "#6f4e37"))
     
-    
+    ggplotly(comp)
   })
   #Halaman Ketiga
   output$table <- DT::renderDataTable({
