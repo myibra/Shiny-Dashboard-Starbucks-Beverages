@@ -165,7 +165,4 @@ function(input, output, session) {
     DT::datatable(sbux_new)
   })
   
-  output$footer <- renderUI({
-    includeHTML('footer.html')
-  })
 }
