@@ -704,7 +704,7 @@ ggplot(agg, aes(x = nutrition, y = value, fill = product_name)) +
   theme_minimal() +
   theme(legend.position = 'none') +
   ylab('') +
-  xlab('Nutrition') +
+  xlab('') +
   scale_x_discrete(breaks = c("caffeine_mg",
                               "calories",
                               "cholesterol_mg",
@@ -726,7 +726,10 @@ ggplot(agg, aes(x = nutrition, y = value, fill = product_name)) +
                               "Total Fat",
                               "Trans Fat")) +
   labs(title = 'Caffè Vanilla Frappuccino Blended vs Caramel Frappuccino Blended') +
-  theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank())
+  theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank()) +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(axis.text.y = element_blank()) +
+  scale_fill_manual(values=c("#00704A", "#6f4e37"))
 ```
 
 
