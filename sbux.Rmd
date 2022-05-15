@@ -618,6 +618,21 @@ agg_test2 <- sbux_new %>%
   pivot_longer(cols = c(calories,total_fat_g,saturated_fat_g, trans_fat_g, cholesterol_mg, sodium_mg, total_carbs_g, fiber_g, sugar_g, caffeine_mg), names_to = 'nutrition') 
 agg_test2
 ```
+#### fix agg tabel
+agg 1
+```{r}
+agg_sbux_cat1 <- filter(sbux_new,category == 'Frappuccino Blended Coffee')
+agg_sbux_pro1 <- filter(agg_sbux_cat1, product_name == 'Caffè Vanilla Frappuccino Blended')
+agg_sbux_milk1 <- filter(agg_sbux_pro1, milk == '2%')
+agg_sbux_whip1 <- filter(agg_sbux_milk1, whip == 'with whip cream')
+agg_sbux_size1 <-  filter(agg_sbux_whip1, size == 'venti')
+sbux_agg_1 <- agg_sbux_size1 %>% 
+                select(-c(size,milk,whip,serv_size_m_l,category)) %>% 
+                pivot_longer(cols = c(calories,total_fat_g,saturated_fat_g, trans_fat_g, cholesterol_mg, sodium_mg, total_carbs_g, fiber_g, sugar_g, caffeine_mg), names_to = 'nutrition')
+
+sbux_agg_1
+```
+
 
 ```{r}
 library(ggh4x)
