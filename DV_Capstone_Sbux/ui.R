@@ -64,8 +64,12 @@ navbarPage(
                       choices = NULL), #unique(agg_sbux_pro1$milk)
                     selectInput(
                       inputId = 'whip1',
-                      label = 'Select Whip',
-                      choices = NULL) #unique(agg_sbux_milk1$whip)
+                      label = 'Select Whip Cream',
+                      choices = NULL), #unique(agg_sbux_milk1$whip)
+                    selectInput(
+                      inputId = 'size1',
+                      label = 'Select Size',
+                      choices = NULL)
 
                     ),
              column(width = 6,
