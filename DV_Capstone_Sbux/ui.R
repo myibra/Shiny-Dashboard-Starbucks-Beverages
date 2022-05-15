@@ -48,8 +48,16 @@ navbarPage(
   tabPanel("Beverage Comparison",
            #filter
            fluidRow(
-             column(),
-             column()
+             column(width = 6,
+                    h4("Beverage 1"),
+                    selectInput(inputId = 'cat1',
+                                label = 'Select Category',
+                                choices = unique(sbux_new$category)),
+                    selectInput(inputId = 'pro1',
+                                label = 'Select Product',
+                                choices = unique(agg_sbux_cat1$product_name))),
+             column(width = 6,
+                    h4("Beverage 2"))
            )),
   tabPanel("Data", DT::dataTableOutput("table")),
   
