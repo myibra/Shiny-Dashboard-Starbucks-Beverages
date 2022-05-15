@@ -119,8 +119,7 @@ function(input, output, session) {
   
   #Halaman Kedua
   
-  #Column 1
-  
+  #Filter Column 1
   observeEvent(input$cat1,{
     updateSelectInput(session,'pro1',
                       choices=unique(sbux_new$product_name[sbux_new$category == input$cat1]))
@@ -138,7 +137,7 @@ function(input, output, session) {
   
   observeEvent(input$whip1,{
     updateSelectInput(session,'size1',
-                      choices=unique(sbux_new$size[sbux_new$category == input$cat1 & sbux_new$product_name == input$pro1 & sbux_new$milk == input$milk1 & sbux_new == input$whip1]))
+                      choices=unique(sbux_new$size[sbux_new$category == input$cat1 & sbux_new$product_name == input$pro1 & sbux_new$milk == input$milk1 & sbux_new$whip == input$whip1]))
   }) 
   #Halaman Ketiga
   output$table <- DT::renderDataTable({
