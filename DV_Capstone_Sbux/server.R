@@ -131,9 +131,9 @@ function(input, output, session) {
                       choices=unique(sbux_new$milk[sbux_new$category == input$cat1 & sbux_new$product_name == input$pro1]))
   }) 
   
-  observeEvent(input$milk11,{
-    updateSelectInput(session,'pro1',
-                      choices=unique(filter(sbux_new, category == input$cat1)))
+  observeEvent(input$milk1,{
+    updateSelectInput(session,'whip1',
+                      choices=unique(sbux_new$whip[sbux_new$category == input$cat1 & sbux_new$product_name == input$pro1 & sbux_new$milk == input$milk1]))
   }) 
   #Halaman Ketiga
   output$table <- DT::renderDataTable({
