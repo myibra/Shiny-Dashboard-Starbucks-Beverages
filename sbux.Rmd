@@ -619,6 +619,11 @@ agg_test2 <- sbux_new %>%
 agg_test2
 ```
 #### fix agg tabel
+
+```{r}
+sbux_new$whip[sbux_new$category == 'Frappuccino Blended Coffee' & sbux_new$product_name == 'Caramel Frappuccino Blended' & sbux_new$milk == '2%']
+```
+
 agg 1
 ```{r}
 agg_sbux_cat1 <- filter(sbux_new,category == 'Refresher')
