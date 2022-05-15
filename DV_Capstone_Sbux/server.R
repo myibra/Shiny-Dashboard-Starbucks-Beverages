@@ -118,6 +118,50 @@ function(input, output, session) {
   })
   
   #Halaman Kedua
+  
+  #Column 1
+  output$category1_selector <- renderUI({
+    
+    selectInput(
+      inputId = "cat1", 
+      label = "Select Category",
+      choices = unique(sbux_new$category))
+    
+  })
+  
+  output$product1_selector <- renderUI({
+    
+    agg_sbux_cat1 <- sbux_new[sbux_new$category == input$cat1, 'product_name']
+    
+    selectInput(
+      inputId = "pro1", 
+      label = "Select Product",
+      choices = unique(agg_sbux_cat1$product_name))
+    
+  })
+  
+  output$milk1_selector <- renderUI({
+    
+    agg_sbux_pro1 <- agg_sbux_cat1[agg_sbux_cat1$product_name == input$pro1, 'milk']
+    
+    selectInput(
+      inputId = 'milk1',
+      label = 'Select Milk',
+      choices = unique(agg_sbux_pro1$milk)
+    )
+  
+  })
+  
+  output$whip1_selector <- ({
+    agg_sbux_milk1 <- agg_sbux_pro1[agg_sbux_pro1$milk == input$milk1, 'whip']
+    
+    selectInput(
+      inputId = 'whip1',
+      label = 'Select Whip',
+      choices = unique(agg_sbux_milk1$whip)
+    )
+  })
+  #Halaman Ketiga
   output$table <- DT::renderDataTable({
     DT::datatable(sbux_new)
   })

@@ -50,12 +50,11 @@ navbarPage(
            fluidRow(
              column(width = 6,
                     h4("Beverage 1"),
-                    selectInput(inputId = 'cat1',
-                                label = 'Select Category',
-                                choices = unique(sbux_new$category)),
-                    selectInput(inputId = 'pro1',
-                                label = 'Select Product',
-                                choices = unique(agg_sbux_cat1$product_name))),
+                    uiOutput("category1_selector"),
+                    uiOutput("product1_selector"),
+                    uiOutput("milk1_selector"),
+                    uiOutput('whip1_selector')
+                    ),
              column(width = 6,
                     h4("Beverage 2"))
            )),
