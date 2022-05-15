@@ -621,7 +621,7 @@ agg_test2
 #### fix agg tabel
 agg 1
 ```{r}
-agg_sbux_cat1 <- filter(sbux_new,category == 'Frappuccino Blended Coffee')
+agg_sbux_cat1 <- filter(sbux_new,category == 'Refresher')
 agg_sbux_pro1 <- filter(agg_sbux_cat1, product_name == 'Caffè Vanilla Frappuccino Blended')
 agg_sbux_milk1 <- filter(agg_sbux_pro1, milk == '2%')
 agg_sbux_whip1 <- filter(agg_sbux_milk1, whip == 'with whip cream')
@@ -747,7 +747,26 @@ ggplot(agg, aes(x = nutrition, y = value, fill = product_name)) +
   scale_fill_manual(values=c("#00704A", "#6f4e37"))
 ```
 
+```{r}
+  candyData <- read.table(
+    text = "Brand       Candy
+    Nestle      100Grand
+    Nestle       Butterfinger
+    Nestle      Crunch
+    Hershey's   KitKat
+    Hershey's   Reeses
+    Hershey's   Mounds
+    Mars        Snickers
+    Mars        Twix
+    Mars        M&Ms",
+    header = TRUE,
+    stringsAsFactors = FALSE)
+```
 
+
+```{r}
+candyData[candyData$Brand == 'Nestle', "Candy"]
+```
 
 
 
