@@ -610,13 +610,12 @@ agg_test
 
 agg_test2 <- sbux_new %>% 
   filter(category == 'Frappuccino Blended Coffee') %>% 
-  filter(product_name == 'Caffè Vanilla Frappuccino Blended') %>% 
-  filter(milk == 'whole') %>%
+  filter(product_name == 'Caramel Frappuccino Blended') %>% 
+  filter(milk == '2%') %>%
   filter(whip == 'with whip cream') %>% 
-  filter(size == 'tall') %>% 
+  filter(size == 'venti') %>% 
   select(-c(size,milk,whip,serv_size_m_l,category)) %>% 
-  pivot_longer(cols = c(calories,total_fat_g,saturated_fat_g, trans_fat_g, cholesterol_mg, sodium_mg, total_carbs_g, fiber_g, sugar_g, caffeine_mg), names_to = 'nutrition')
-
+  pivot_longer(cols = c(calories,total_fat_g,saturated_fat_g, trans_fat_g, cholesterol_mg, sodium_mg, total_carbs_g, fiber_g, sugar_g, caffeine_mg), names_to = 'nutrition') 
 agg_test2
 ```
 
@@ -628,15 +627,13 @@ library(ggh4x)
 ```{r}
 plot1_test <- ggplot(agg_test) +
    geom_bar(data = agg_test, aes(x = nutrition, y = value), stat = "identity", fill = "blue", width = 0.8) +
-  scale_y_continuous(trans = "reverse", breaks = seq(0, 600, by = 100)) +
+  scale_y_continuous(trans = "reverse", limits = c(600,0)) +
   scale_x_discrete(position = "top") +
   theme(
-    axis.text.y = element_blank()
+    axis.ticks.y = element_blank()
   ) +
-  labs(x = NULL) +
-  coord_flip() +
-  force_panelsizes(rows = unit(4, "in"),
-                   cols = unit(3, "in"))
+  labs(x = NULL, y = NULL) +
+  coord_flip() 
 
   plot1_test
 ```
@@ -646,21 +643,91 @@ plot1_test <- ggplot(agg_test) +
 plot1_test2 <- ggplot(agg_test2) +
   geom_bar(data = agg_test2, aes(x = nutrition, y = value), stat = "identity",
     fill = "red", width = 0.8) +
-  scale_y_continuous(breaks = seq(0, 600, by = 100)) +
+  scale_y_continuous(limits = c(0,600)) +
   theme(
     axis.text.y = element_text(size = 10, hjust = 0.5, margin=margin(r=30))
   ) +
   labs(x = "") +
-  coord_flip() +
-  force_panelsizes(rows = unit(4, "in"),
-                   cols = unit(3, "in"))
+  coord_flip() 
 
 plot1_test2
 ```
 
 ```{r}
+library(cowplot)
+
+pl <- align_plots(plot1_test, plot1_test2, align="h")
+
+```
+
+```{r}
+ggdraw(pl[[1]])
+```
+```{r}
+ggdraw(pl[[2]])
+```
+
+
+```{r}
 require("gridExtra")
 
-gridExtra::grid.arrange(plot1_test, plot1_test2, ncol = 2, widths = c(1, 1.2))
+gridExtra::grid.arrange(ggdraw(pl[[1]]), ggdraw(pl[[2]]), ncol = 2)
 ```
+
+### tipe plot2
+
+```{r}
+agg <- bind_rows(agg_test, agg_test2)
+
+y_breaks <- pretty(agg$value)
+```
+
+```{r}
+ggplot(agg, aes(x = nutrition, y = value, fill = product_name)) +
+  geom_bar(stat = 'identity',
+           color = 'white',
+           lwd = 5) +
+  coord_flip() +
+  scale_y_continuous(breaks = y_breaks,
+                     labels = abs(y_breaks)) 
+```
+
+### tipe plot3
+
+```{r}
+agg
+```
+
+```{r}
+ggplot(agg, aes(x = nutrition, y = value, fill = product_name)) +
+  geom_bar(stat="identity", position="dodge", width=0.8) +
+  theme_minimal() +
+  theme(legend.position = 'none') +
+  ylab('') +
+  xlab('Nutrition') +
+  scale_x_discrete(breaks = c("caffeine_mg",
+                              "calories",
+                              "cholesterol_mg",
+                              "fiber_g",
+                              "saturated_fat_g",
+                              "sodium_mg",
+                              "sugar_g",
+                              "total_carbs_g",
+                              "total_fat_g",
+                              "trans_fat_g"),
+                   labels = c("Caffeine",
+                              "Calories",
+                              "Cholesterol",
+                              "Fiber",
+                              "Saturated Fat",
+                              "Sodium",
+                              "Sugar",
+                              "Total Carbs",
+                              "Total Fat",
+                              "Trans Fat")) 
+```
+
+
+
+
 
