@@ -186,7 +186,24 @@ function(input, output, session) {
     
     comp_beverage <- bind_rows(beverage1, beverage2)
     
-    comp <- ggplot(comp_beverage, aes(x = nutrition, y = value, fill = product_name)) +
+    comp_beverage$nutrition <- comp_beverage$nutrition %>% 
+      replace(comp_beverage$nutrition == 'calories', 'Calories') %>% 
+      replace(comp_beverage$nutrition == 'total_fat_g', 'Total Fat') %>% 
+      replace(comp_beverage$nutrition == 'saturated_fat_g','Saturated Fat') %>% 
+      replace(comp_beverage$nutrition == 'trans_fat_g','Trans Fat') %>% 
+      replace(comp_beverage$nutrition == 'cholesterol_mg','Cholesterol') %>% 
+      replace(comp_beverage$nutrition == 'sodium_mg','Sodium') %>% 
+      replace(comp_beverage$nutrition == 'total_carbs_g','Total Carbs') %>% 
+      replace(comp_beverage$nutrition == 'fiber_g','Fiber') %>% 
+      replace(comp_beverage$nutrition == 'sugar_g','Sugar') %>% 
+      replace(comp_beverage$nutrition == 'caffeine_mg','Caffeine') 
+    
+    comp_beverage <- comp_beverage %>% 
+      mutate(unit = c('kcal', 'g', 'g', 'g', 'g', 'mg', 'g', 'g', 'g', 'mg', 'kcal', 'g', 'g', 'g', 'g', 'mg', 'g', 'g', 'g', 'mg')) %>% 
+      mutate(label = glue('{product_name}
+                          {nutrition} : {value} {unit}'))
+    
+    comp <- ggplot(comp_beverage, aes(x = nutrition, y = value, fill = product_name, text = label)) +
       geom_bar(stat="identity", position="dodge", width=0.8) +
       theme_minimal() +
       theme(legend.position = 'none') +
@@ -218,7 +235,7 @@ function(input, output, session) {
       theme(axis.text.y = element_blank()) +
       scale_fill_manual(values=c("#00704A", "#6f4e37"))
     
-    ggplotly(comp)
+    ggplotly(comp, tooltip = 'text')
   })
   #Halaman Ketiga
   output$table <- DT::renderDataTable({
