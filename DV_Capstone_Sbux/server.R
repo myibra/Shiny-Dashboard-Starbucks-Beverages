@@ -139,6 +139,27 @@ function(input, output, session) {
     updateSelectInput(session,'size1',
                       choices=unique(sbux_new$size[sbux_new$category == input$cat1 & sbux_new$product_name == input$pro1 & sbux_new$milk == input$milk1 & sbux_new$whip == input$whip1]))
   }) 
+  
+  #Filter Column 2
+  observeEvent(input$cat2,{
+    updateSelectInput(session,'pro2',
+                      choices=unique(sbux_new$product_name[sbux_new$category == input$cat2]))
+  }) 
+  
+  observeEvent(input$pro2,{
+    updateSelectInput(session,'milk2',
+                      choices=unique(sbux_new$milk[sbux_new$category == input$cat2 & sbux_new$product_name == input$pro2]))
+  }) 
+  
+  observeEvent(input$milk2,{
+    updateSelectInput(session,'whip2',
+                      choices=unique(sbux_new$whip[sbux_new$category == input$cat2 & sbux_new$product_name == input$pro2 & sbux_new$milk == input$milk2]))
+  }) 
+  
+  observeEvent(input$whip2,{
+    updateSelectInput(session,'size2',
+                      choices=unique(sbux_new$size[sbux_new$category == input$cat2 & sbux_new$product_name == input$pro2 & sbux_new$milk == input$milk2 & sbux_new$whip == input$whip2]))
+  }) 
   #Halaman Ketiga
   output$table <- DT::renderDataTable({
     DT::datatable(sbux_new)

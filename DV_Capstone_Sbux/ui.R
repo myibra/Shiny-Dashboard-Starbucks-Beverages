@@ -48,7 +48,11 @@ navbarPage(
   tabPanel("Beverage Comparison",
            #filter
            fluidRow(
+             'buat membandingkan 2 minuman'
+           ),
+           fluidRow(
              column(width = 6,
+                    align="center",
                     h4("Beverage 1"),
                     selectInput(
                       inputId = "cat1", 
@@ -73,7 +77,29 @@ navbarPage(
 
                     ),
              column(width = 6,
-                    h4("Beverage 2"))
+                    align="center",
+                    h4("Beverage 2"),
+                    selectInput(
+                      inputId = "cat2", 
+                      label = "Select Category",
+                      choices = unique(sbux_new$category)),
+                    selectInput(
+                      inputId = "pro2", 
+                      label = "Select Product",
+                      choices = NULL), #unique(agg_sbux_cat1$product_name)
+                    selectInput(
+                      inputId = 'milk2',
+                      label = 'Select Milk',
+                      choices = NULL), #unique(agg_sbux_pro1$milk)
+                    selectInput(
+                      inputId = 'whip2',
+                      label = 'Select Whip Cream',
+                      choices = NULL), #unique(agg_sbux_milk1$whip)
+                    selectInput(
+                      inputId = 'size2',
+                      label = 'Select Size',
+                      choices = NULL)
+                    )
            )),
   tabPanel("Data", DT::dataTableOutput("table")),
   
