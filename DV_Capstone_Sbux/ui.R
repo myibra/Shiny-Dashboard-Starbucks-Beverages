@@ -45,10 +45,15 @@ navbarPage(
                  plotlyOutput(outputId = 'plot2')
                )
              ))),
+  tabPanel("Beverage Comparison",
+           #filter
+           fluidRow(
+             column(),
+             column()
+           )),
   tabPanel("Data", DT::dataTableOutput("table")),
   
-  div(class = 'footer',
-      includeHTML('footer.html'))
+
 )
 
 
