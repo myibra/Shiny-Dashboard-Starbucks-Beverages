@@ -7,7 +7,7 @@ navbarPage(
   footer = includeHTML("footer.html"),
   fluid = TRUE, 
   collapsible = TRUE,
-  tabPanel('Nutrition in Starbucks Beverages',
+  tabPanel('Nutrition',
            # Top N Plot
            fluidRow(
              sidebarLayout(
