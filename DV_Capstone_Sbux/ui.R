@@ -7,20 +7,6 @@ navbarPage(
   footer = includeHTML("footer.html"),
   fluid = TRUE, 
   collapsible = TRUE,
-  tabPanel('Home',
-           box(width = 12,
-             fluidRow(
-               column(width = 10, h4(textOutput('part1'))),
-               column(width = 2, align = 'center', img(src = "images/Roasted_coffee_beans.jpeg", width = 100))
-           )
-           ),
-           box(width = 12,
-             fluidRow(
-               column(width = 10, textOutput('part2')),
-
-             )
-           )
-           ),
   tabPanel('Nutrition',
            # Top N Plot
            fluidRow(
@@ -64,8 +50,9 @@ navbarPage(
              ))),
   tabPanel("Beverage Comparison",
            #filter
-           fluidRow( align="center",
-             'buat membandingkan 2 minuman'
+           fluidRow(
+             h1('Confused which one to choose?', align = 'center'),
+             h3('Compare Now!', align = 'center')
            ),
            fluidRow(
              column(width = 6,
@@ -91,8 +78,8 @@ navbarPage(
                       inputId = 'size1',
                       label = 'Select Size',
                       choices = NULL)
-
-                    ),
+                    
+             ),
              column(width = 6,
                     align="center",
                     h4("Beverage 2"),
@@ -116,15 +103,12 @@ navbarPage(
                       inputId = 'size2',
                       label = 'Select Size',
                       choices = NULL)
-                    )
+             )
            ),
            fluidRow(
              plotlyOutput('comparison')
            )),
   tabPanel("Data", DT::dataTableOutput("table")),
   
-
+  
 )
-
-
-
