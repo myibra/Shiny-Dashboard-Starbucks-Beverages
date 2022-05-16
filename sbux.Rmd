@@ -413,11 +413,9 @@ sbux_new %>%
                 #filter(category == 'Espresso') %>% 
                 ggplot(aes(y = caffeine_mg, x = sugar_g, label = product_name)) +
                 geom_point() +
-                geom_hline(yintercept = 400, color = 'brown', linetype = 2) +
-                geom_vline(xintercept = 36, color = 'blue', linetype = 2) + #for men
-                geom_vline(xintercept = 24, color = 'pink', linetype = 2) +
-                geom_text(aes(0, 400, label = 'caffein max. daily intake (400 mg)', vjust = -0.5, hjust =-0.05)) +
-                geom_text(aes(36, 0, label = 'sugar max. daily intake (36 g)', angle = 90, vjust = -0.5, hjust =-0.05)) +
+                geom_hline(yintercept = 400, color = 'blue', linetype = 2) +
+                geom_vline(xintercept = 36, color = 'red', linetype = 2) + #for men 36 g women 24
+                scale_color_manual(name = "Max Daily Intake", values = c(Caffeine = "blue", Sugar = "red")) +
                 theme_minimal()
 ```
 
