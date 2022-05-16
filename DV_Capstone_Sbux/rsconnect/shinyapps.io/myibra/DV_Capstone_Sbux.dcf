@@ -1,0 +1,13 @@
+name: DV_Capstone_Sbux
+title: DV_Capstone_Sbux
+username:
+account: myibra
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 6307777
+bundleId: 5909226
+url: https://myibra.shinyapps.io/DV_Capstone_Sbux/
+when: 1652668324.79216
+lastSyncTime: 1652668324.79217
+asMultiple: FALSE
+asStatic: FALSE

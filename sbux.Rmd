@@ -411,11 +411,10 @@ gg %>%
 ```{r}
 sbux_new %>% 
                 #filter(category == 'Espresso') %>% 
-                ggplot(aes(y = caffeine_mg, x = sugar_g, label = product_name)) +
-                geom_point() +
+                ggplot(aes(y = caffeine_mg, x = sugar_g, label = product_name, color = '#00704A'), color = '#00704A') +
+                geom_point(fill = '#00704A') +
                 geom_hline(yintercept = 400, color = 'blue', linetype = 2) +
                 geom_vline(xintercept = 36, color = 'red', linetype = 2) + #for men 36 g women 24
-                scale_color_manual(name = "Max Daily Intake", values = c(Caffeine = "blue", Sugar = "red")) +
                 theme_minimal()
 ```
 
@@ -646,32 +645,18 @@ comp <- ggplot(comp_beverage, aes(x = nutrition, y = value, fill = product_name,
   theme(legend.position = 'none') +
   ylab('') +
   xlab('') +
-  scale_x_discrete(breaks = c("caffeine_mg",
-                              "calories",
-                              "cholesterol_mg",
-                              "fiber_g",
-                              "saturated_fat_g",
-                              "sodium_mg",
-                              "sugar_g",
-                              "total_carbs_g",
-                              "total_fat_g",
-                              "trans_fat_g"),
-                   labels = c("Caffeine",
-                              "Calories",
-                              "Cholesterol",
-                              "Fiber",
-                              "Saturated Fat",
-                              "Sodium",
-                              "Sugar",
-                              "Total Carbs",
-                              "Total Fat",
-                              "Trans Fat")) +
   labs(title = 'Caffè Vanilla Frappuccino Blended vs Caramel Frappuccino Blended') +
   theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank()) +
   theme(plot.title = element_text(hjust = 0.5)) +
   theme(axis.text.y = element_blank()) +
   scale_fill_manual(values=c("#00704A", "#6f4e37"))
+
 ```
+
+```{r}
+comp
+```
+
 
 ```{r}
 ggplotly(comp, tooltip = 'text')

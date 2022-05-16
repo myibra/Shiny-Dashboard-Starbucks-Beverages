@@ -209,26 +209,6 @@ function(input, output, session) {
       theme(legend.position = 'none') +
       ylab('') +
       xlab('') +
-      scale_x_discrete(breaks = c("caffeine_mg",
-                                  "calories",
-                                  "cholesterol_mg",
-                                  "fiber_g",
-                                  "saturated_fat_g",
-                                  "sodium_mg",
-                                  "sugar_g",
-                                  "total_carbs_g",
-                                  "total_fat_g",
-                                  "trans_fat_g"),
-                       labels = c("Caffeine",
-                                  "Calories",
-                                  "Cholesterol",
-                                  "Fiber",
-                                  "Saturated Fat",
-                                  "Sodium",
-                                  "Sugar",
-                                  "Total Carbs",
-                                  "Total Fat",
-                                  "Trans Fat")) +
       labs(title = glue('{input$pro1} vs {input$pro2}')) +
       theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank()) +
       theme(plot.title = element_text(hjust = 0.5)) +
