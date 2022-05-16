@@ -7,8 +7,25 @@ navbarPage(
   footer = includeHTML("footer.html"),
   fluid = TRUE, 
   collapsible = TRUE,
+  tabPanel('Home',
+           box(width = 12,
+             fluidRow(
+               column(width = 10, h4(textOutput('part1'))),
+               column(width = 2, align = 'center', img(src = "images/Roasted_coffee_beans.jpeg", width = 100))
+           )
+           ),
+           box(width = 12,
+             fluidRow(
+               column(width = 10, textOutput('part2')),
+
+             )
+           )
+           ),
   tabPanel('Nutrition',
            # Top N Plot
+           fluidRow(
+             h1('Starbucks Beverage Nutrition Facts', align = 'center')
+           ),
            fluidRow(
              sidebarLayout(
                sidebarPanel(
